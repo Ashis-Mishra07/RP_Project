@@ -2,36 +2,49 @@ import google.generativeai as genai
 from PIL import Image
 import io
 import base64
+import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 
-def setup_ai(api_key):
+def setup_ai():
     """
-    Setup Model system with the provided API key
+    Setup Model system with the API key from environment
     """
     try:
+        api_key = os.getenv('MODEL_API_KEY')
+        if not api_key:
+            return False
         genai.configure(api_key=api_key)
         return True
     except Exception as e:
         return False
 
 
-def predict_with_ai(image, api_key):
+def predict_with_ai(image):
     """
     Use Model to recognize text/words from an uploaded image
     
     Args:
         image: PIL Image object
-        api_key: Model API key
     
     Returns:
         str: Recognized text/words from the image
     """
     try:
+        # Get API key from environment
+        api_key = os.getenv('MODEL_API_KEY')
+        if not api_key:
+            return "Error: Model API key not found in environment"
+            
         # Configure Model system
         genai.configure(api_key=api_key)
         
         # Initialize the model
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        model_name = os.getenv('MODEL_NAME_VISION', 'gemini-pro-vision')
+        model = genai.GenerativeModel(model_name)
         
         # Create a simple prompt for text recognition
         prompt = """
@@ -55,19 +68,22 @@ def predict_with_ai(image, api_key):
         return f"Error: {str(e)}"
 
 
-def test_ai_api(api_key):
+def test_ai_api():
     """
     Test if the Model API key is working
-    
-    Args:
-        api_key: Model API key
     
     Returns:
         bool: True if API is working, False otherwise
     """
     try:
+        # Get API key from environment
+        api_key = os.getenv('MODEL_API_KEY')
+        if not api_key:
+            return False
+            
         genai.configure(api_key=api_key)
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        model_name = os.getenv('MODEL_NAME_TEXT', 'gemini-pro')
+        model = genai.GenerativeModel(model_name)
         
         # Test with a simple text prompt
         response = model.generate_content("Hello, this is a test.")
