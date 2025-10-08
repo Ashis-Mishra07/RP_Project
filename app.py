@@ -152,8 +152,46 @@ def main():
                                     unsafe_allow_html=True
                                 )
                                 
+                                # Show detailed stage-by-stage results
+                                st.markdown("## 🔬 Detailed Stage Analysis")
+                                
+                                for stage_num in range(1, 7):
+                                    stage_key = f"stage_{stage_num}"
+                                    if stage_key in stage_results:
+                                        stage_info = stage_results[stage_key]
+                                        
+                                        with st.expander(f"📊 {stage_info['name']} - {stage_info['status']}", expanded=False):
+                                            col_left, col_right = st.columns([1, 1])
+                                            
+                                            with col_left:
+                                                st.markdown("**Input:**")
+                                                st.info(stage_info['input'])
+                                                
+                                                if 'result_image' in stage_info and stage_info['result_image']:
+                                                    st.markdown("**Processed Image:**")
+                                                    st.image(stage_info['result_image'], caption=f"After {stage_info['name']}", width=200)
+                                            
+                                            with col_right:
+                                                st.markdown("**Output:**")
+                                                st.success(stage_info['output'])
+                                                
+                                                if 'result_text' in stage_info:
+                                                    st.markdown("**Extracted Text:**")
+                                                    st.code(stage_info['result_text'])
+                                                
+                                                if 'result_data' in stage_info and stage_info['result_data']:
+                                                    st.markdown("**Technical Details:**")
+                                                    if isinstance(stage_info['result_data'], dict):
+                                                        for key, value in stage_info['result_data'].items():
+                                                            if not key.startswith('_'):  # Hide private keys
+                                                                st.text(f"{key}: {value}")
+                                                    elif isinstance(stage_info['result_data'], list):
+                                                        st.text(f"Detected {len(stage_info['result_data'])} items")
+                                                        for i, item in enumerate(stage_info['result_data'][:3]):  # Show first 3
+                                                            st.text(f"Item {i+1}: {item}")
+                                
                                 # Show agent processing details
-                                with st.expander("📊 Agent Processing Details"):
+                                with st.expander("📊 Legacy Agent Processing Details"):
                                     col_a, col_b = st.columns(2)
                                     
                                     with col_a:
