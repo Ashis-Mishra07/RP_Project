@@ -79,7 +79,7 @@ def main():
                     image, 
                     caption="Your uploaded image",
                     width=300,  # Fixed width for consistent sizing
-                    use_column_width=False
+                    use_container_width=False
                 )
                 
                 # Show basic image info
@@ -161,34 +161,212 @@ def main():
                                         stage_info = stage_results[stage_key]
                                         
                                         with st.expander(f"📊 {stage_info['name']} - {stage_info['status']}", expanded=False):
-                                            col_left, col_right = st.columns([1, 1])
                                             
-                                            with col_left:
+                                            # Special handling for different stages
+                                            if stage_num == 1:  # Image Preprocessing
+                                                col_left, col_right = st.columns([1, 1])
+                                                with col_left:
+                                                    st.markdown("**Input:**")
+                                                    st.info(stage_info['input'])
+                                                    if 'result_image' in stage_info and stage_info['result_image']:
+                                                        st.markdown("**Original Image:**")
+                                                        st.image(image, caption="Original Image", width=250)
+                                                
+                                                with col_right:
+                                                    st.markdown("**Output:**")
+                                                    st.success(stage_info['output'])
+                                                    if 'result_image' in stage_info and stage_info['result_image']:
+                                                        st.markdown("**Enhanced Image:**")
+                                                        st.image(stage_info['result_image'], caption="After Enhancement", width=250)
+                                            
+                                            elif stage_num == 2:  # Feature Extraction - Fix layout
                                                 st.markdown("**Input:**")
                                                 st.info(stage_info['input'])
+                                                st.markdown("**Output:**")
+                                                st.success(stage_info['output'])
                                                 
-                                                if 'result_image' in stage_info and stage_info['result_image']:
-                                                    st.markdown("**Processed Image:**")
-                                                    st.image(stage_info['result_image'], caption=f"After {stage_info['name']}", width=200)
+                                                if 'result_data' in stage_info and stage_info['result_data']:
+                                                    col1, col2 = st.columns(2)
+                                                    
+                                                    with col1:
+                                                        st.markdown("**🔍 Patch Analysis:**")
+                                                        patch_data = stage_info['result_data'].get('patch_analysis', {})
+                                                        for key, value in patch_data.items():
+                                                            st.text(f"{key.replace('_', ' ').title()}: {value}")
+                                                        
+                                                        st.markdown("**📊 Feature Statistics:**")
+                                                        feature_stats = stage_info['result_data'].get('feature_statistics', {})
+                                                        for key, value in feature_stats.items():
+                                                            if isinstance(value, float):
+                                                                st.text(f"{key.replace('_', ' ').title()}: {value:.2f}")
+                                                            else:
+                                                                st.text(f"{key.replace('_', ' ').title()}: {value}")
+                                                    
+                                                    with col2:
+                                                        st.markdown("**🎯 Attention Weights:**")
+                                                        attention_weights = stage_info['result_data'].get('attention_weights', {})
+                                                        for head, weight in attention_weights.items():
+                                                            st.text(f"{head.replace('_', ' ').title()}: {weight}")
+                                                        
+                                                        st.markdown("**🧠 Spatial Encoding:**")
+                                                        spatial_data = stage_info['result_data'].get('spatial_encoding', {})
+                                                        for key, value in spatial_data.items():
+                                                            st.text(f"{key.replace('_', ' ').title()}: {value}")
                                             
-                                            with col_right:
+                                            elif stage_num == 3:  # Text Detection - Add table
+                                                st.markdown("**Input:**")
+                                                st.info(stage_info['input'])
+                                                st.markdown("**Output:**")
+                                                st.success(stage_info['output'])
+                                                
+                                                # Create character detection table
+                                                if 'result_data' in stage_info and 'characters' in stage_info['result_data']:
+                                                    st.markdown("**📋 Character Detection Table:**")
+                                                    
+                                                    import pandas as pd
+                                                    
+                                                    characters_data = stage_info['result_data']['characters']
+                                                    if characters_data:
+                                                        # Prepare data for table
+                                                        table_data = []
+                                                        for char_info in characters_data:
+                                                            table_data.append({
+                                                                'Text Detected': char_info.get('character', ''),
+                                                                'Confidence': f"{char_info.get('confidence', 0):.3f}",
+                                                                'Font Size Estimate': char_info.get('font_size_estimate', ''),
+                                                                'Is Uppercase': '✅' if char_info.get('is_uppercase', False) else '❌',
+                                                                'Stroke Width': char_info.get('stroke_width', ''),
+                                                                'Character Quality': char_info.get('character_quality', '')
+                                                            })
+                                                        
+                                                        # Display as table
+                                                        df = pd.DataFrame(table_data)
+                                                        st.dataframe(df, use_container_width=True)
+                                                    
+                                                    # Word-level analysis
+                                                    if 'words' in stage_info['result_data']:
+                                                        st.markdown("**📝 Word Detection Summary:**")
+                                                        words_data = stage_info['result_data']['words']
+                                                        for i, word_info in enumerate(words_data, 1):
+                                                            st.text(f"Word {i}: '{word_info.get('word', '')}' - Confidence: {word_info.get('confidence', 0):.3f}")
+                                            
+                                            elif stage_num == 4:  # Character Recognition - Unique content
+                                                st.markdown("**Input:**")
+                                                st.info(stage_info['input'])
                                                 st.markdown("**Output:**")
                                                 st.success(stage_info['output'])
                                                 
                                                 if 'result_text' in stage_info:
-                                                    st.markdown("**Extracted Text:**")
-                                                    st.code(stage_info['result_text'])
+                                                    st.markdown("**🔤 Recognized Text:**")
+                                                    st.code(stage_info['result_text'], language='text')
                                                 
-                                                if 'result_data' in stage_info and stage_info['result_data']:
-                                                    st.markdown("**Technical Details:**")
-                                                    if isinstance(stage_info['result_data'], dict):
-                                                        for key, value in stage_info['result_data'].items():
-                                                            if not key.startswith('_'):  # Hide private keys
-                                                                st.text(f"{key}: {value}")
-                                                    elif isinstance(stage_info['result_data'], list):
-                                                        st.text(f"Detected {len(stage_info['result_data'])} items")
-                                                        for i, item in enumerate(stage_info['result_data'][:3]):  # Show first 3
-                                                            st.text(f"Item {i+1}: {item}")
+                                                # OCR Engine Details
+                                                col1, col2 = st.columns(2)
+                                                with col1:
+                                                    st.markdown("**🤖 OCR Engine Analysis:**")
+                                                    details = stage_info.get('details', {})
+                                                    st.text(f"Engine: {details.get('ocr_engine', 'N/A')}")
+                                                    st.text(f"Character Count: {details.get('character_count', 0)}")
+                                                    st.text(f"Word Count: {details.get('word_count', 0)}")
+                                                    
+                                                with col2:
+                                                    st.markdown("**📊 Character Types:**")
+                                                    char_types = details.get('character_types', {})
+                                                    for char_type, count in char_types.items():
+                                                        st.text(f"{char_type.title()}: {count}")
+                                            
+                                            elif stage_num == 5:  # Post-processing - Unique content
+                                                st.markdown("**Input:**")
+                                                st.info(stage_info['input'])
+                                                st.markdown("**Output:**")
+                                                st.success(stage_info['output'])
+                                                
+                                                if 'result_text' in stage_info:
+                                                    st.markdown("**✨ Post-processed Text:**")
+                                                    st.code(stage_info['result_text'], language='text')
+                                                
+                                                # Post-processing details
+                                                details = stage_info.get('details', {})
+                                                if 'corrections_made' in details:
+                                                    st.markdown("**🔧 Corrections Made:**")
+                                                    corrections = details['corrections_made']
+                                                    if corrections:
+                                                        for correction in corrections:
+                                                            st.text(f"'{correction.get('original', '')}' → '{correction.get('corrected', '')}' ({correction.get('correction_type', '')})")
+                                                    else:
+                                                        st.text("No corrections needed - text was already clean!")
+                                                
+                                                col1, col2 = st.columns(2)
+                                                with col1:
+                                                    st.markdown("**📈 Processing Stats:**")
+                                                    st.text(f"Original Words: {details.get('original_words', 0)}")
+                                                    st.text(f"Dictionary Matches: {details.get('dictionary_matches', 0)}")
+                                                    st.text(f"Spelling Corrections: {details.get('spelling_corrections', 0)}")
+                                                
+                                                with col2:
+                                                    st.markdown("**🎯 Quality Metrics:**")
+                                                    st.text(f"Avg Word Confidence: {details.get('avg_word_confidence', 0):.3f}")
+                                                    st.text(f"Final Confidence: {details.get('final_confidence', 0):.3f}")
+                                            
+                                            elif stage_num == 6:  # Final Output - Unique content
+                                                st.markdown("**Input:**")
+                                                st.info(stage_info['input'])
+                                                st.markdown("**Output:**")
+                                                st.success(stage_info['output'])
+                                                
+                                                if 'result_text' in stage_info:
+                                                    st.markdown("**🎉 Final Result:**")
+                                                    st.code(stage_info['result_text'], language='text')
+                                                
+                                                # Final analysis
+                                                details = stage_info.get('details', {})
+                                                
+                                                # Quality assessment
+                                                quality = details.get('quality_assessment', {})
+                                                st.markdown("**🏆 Quality Assessment:**")
+                                                col1, col2, col3 = st.columns(3)
+                                                with col1:
+                                                    st.metric("Character Accuracy", f"{quality.get('character_accuracy', 0)}%")
+                                                with col2:
+                                                    st.metric("Word Accuracy", f"{quality.get('word_accuracy', 0)}%")
+                                                with col3:
+                                                    st.metric("Overall Confidence", f"{details.get('overall_confidence', 0):.3f}")
+                                                
+                                                # Recommendations
+                                                if 'recommendations' in details:
+                                                    st.markdown("**💡 Recommendations:**")
+                                                    for rec in details['recommendations']:
+                                                        st.text(f"• {rec}")
+                                            
+                                            else:  # Fallback for other stages
+                                                col_left, col_right = st.columns([1, 1])
+                                                
+                                                with col_left:
+                                                    st.markdown("**Input:**")
+                                                    st.info(stage_info['input'])
+                                                    
+                                                    if 'result_image' in stage_info and stage_info['result_image']:
+                                                        st.markdown("**Processed Image:**")
+                                                        st.image(stage_info['result_image'], caption=f"After {stage_info['name']}", width=200)
+                                                
+                                                with col_right:
+                                                    st.markdown("**Output:**")
+                                                    st.success(stage_info['output'])
+                                                    
+                                                    if 'result_text' in stage_info:
+                                                        st.markdown("**Extracted Text:**")
+                                                        st.code(stage_info['result_text'])
+                                                    
+                                                    if 'result_data' in stage_info and stage_info['result_data']:
+                                                        st.markdown("**Technical Details:**")
+                                                        if isinstance(stage_info['result_data'], dict):
+                                                            for key, value in stage_info['result_data'].items():
+                                                                if not key.startswith('_'):  # Hide private keys
+                                                                    st.text(f"{key}: {value}")
+                                                        elif isinstance(stage_info['result_data'], list):
+                                                            st.text(f"Detected {len(stage_info['result_data'])} items")
+                                                            for i, item in enumerate(stage_info['result_data'][:3]):  # Show first 3
+                                                                st.text(f"Item {i+1}: {item}")
                                 
                                 # Show agent processing details
                                 with st.expander("📊 Legacy Agent Processing Details"):
