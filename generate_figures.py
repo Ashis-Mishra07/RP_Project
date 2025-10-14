@@ -55,7 +55,7 @@ def create_agent_architecture():
         
         # Add text with shadow effect
         text_obj = ax.text(pos[0], pos[1], text, ha='center', va='center', 
-                          fontsize=10, fontweight='bold', color='black')
+                          fontsize=14, fontweight='bold', color='black')
         text_obj.set_path_effects([path_effects.withStroke(linewidth=3, foreground='white')])
         boxes.append((pos, text))
     
@@ -88,13 +88,13 @@ def create_agent_architecture():
 • Real-time Compatible"""
     
     ax.text(11.25, 7.25, metrics_text, ha='center', va='center', 
-            fontsize=9, fontweight='bold', color='#2C3E50')
+            fontsize=12, fontweight='bold', color='#2C3E50')
     
     # Add title
     ax.text(6.5, 9.5, 'VisionText Agent Architecture', ha='center', va='center', 
-            fontsize=18, fontweight='bold', color='#2C3E50')
+            fontsize=22, fontweight='bold', color='#2C3E50')
     ax.text(6.5, 9, 'Multi-Stage Handwriting Recognition System', ha='center', va='center', 
-            fontsize=12, style='italic', color='#34495E')
+            fontsize=16, style='italic', color='#34495E')
     
     ax.set_xlim(0, 13.5)
     ax.set_ylim(0, 10)
@@ -110,7 +110,7 @@ def create_processing_pipeline():
     """Create processing pipeline visualization"""
     fig, axes = plt.subplots(2, 4, figsize=(16, 8))
     fig.suptitle('VisionText Agent Processing Pipeline Visualization', 
-                 fontsize=16, fontweight='bold', y=0.95)
+                 fontsize=20, fontweight='bold', y=0.95)
     
     # Simulate processing stages with sample data
     stages = [
@@ -137,7 +137,7 @@ def create_processing_pipeline():
             y2 = 1 + 0.3 * np.cos(x*1.5) + 0.1 * np.random.randn(100)
             ax.plot(x, y1, 'k-', linewidth=3, alpha=0.8)
             ax.plot(x, y2, 'k-', linewidth=3, alpha=0.8)
-            ax.text(5, 0.5, 'Sample Text', ha='center', fontsize=12, fontweight='bold')
+            ax.text(5, 0.5, 'Sample Text', ha='center', fontsize=16, fontweight='bold')
         
         elif i == 1:  # Preprocessed
             # Enhanced contrast version
@@ -146,7 +146,7 @@ def create_processing_pipeline():
             y2 = 1 + 0.3 * np.cos(x*1.5)
             ax.plot(x, y1, 'k-', linewidth=4)
             ax.plot(x, y2, 'k-', linewidth=4)
-            ax.text(5, 0.5, 'Enhanced', ha='center', fontsize=12, fontweight='bold')
+            ax.text(5, 0.5, 'Enhanced', ha='center', fontsize=16, fontweight='bold')
         
         elif i == 2:  # Text detection
             # Bounding boxes
@@ -163,13 +163,13 @@ def create_processing_pipeline():
         
         elif i == 4:  # OCR Recognition
             ax.text(5, 2, 'Recognized:\n"Sample Text"', ha='center', va='center', 
-                   fontsize=11, fontweight='bold', bbox=dict(boxstyle="round,pad=0.3", facecolor='lightblue'))
-            ax.text(5, 0.5, f'Confidence: 92%', ha='center', fontsize=10)
+                   fontsize=14, fontweight='bold', bbox=dict(boxstyle="round,pad=0.3", facecolor='lightblue'))
+            ax.text(5, 0.5, f'Confidence: 92%', ha='center', fontsize=12)
         
         elif i == 5:  # Post-processing
-            ax.text(5, 2.5, 'Original: "Sampel Text"', ha='center', fontsize=10, color='red')
-            ax.text(5, 1.5, '↓ Dictionary Correction', ha='center', fontsize=10, fontweight='bold')
-            ax.text(5, 0.5, 'Corrected: "Sample Text"', ha='center', fontsize=10, color='green', fontweight='bold')
+            ax.text(5, 2.5, 'Original: "Sampel Text"', ha='center', fontsize=12, color='red')
+            ax.text(5, 1.5, '↓ Dictionary Correction', ha='center', fontsize=12, fontweight='bold')
+            ax.text(5, 0.5, 'Corrected: "Sample Text"', ha='center', fontsize=12, color='green', fontweight='bold')
         
         elif i == 6:  # Confidence analysis
             # Confidence score gauge
@@ -184,18 +184,18 @@ def create_processing_pipeline():
             needle_x = [5, 5 + 0.8 * np.cos(angle)]
             needle_y = [1, 1 + 0.8 * np.sin(angle)]
             ax.plot(needle_x, needle_y, 'r-', linewidth=4)
-            ax.text(5, 0.2, '95.7%', ha='center', fontsize=12, fontweight='bold')
+            ax.text(5, 0.2, '95.7%', ha='center', fontsize=16, fontweight='bold')
         
         else:  # Final output
-            ax.text(5, 2, '✅ Final Result:', ha='center', fontsize=12, fontweight='bold', color='green')
-            ax.text(5, 1.3, '"Sample Text"', ha='center', fontsize=14, fontweight='bold')
-            ax.text(5, 0.7, 'Confidence: 95.7%', ha='center', fontsize=10)
-            ax.text(5, 0.3, f'Time: {sum(processing_times[1:i+1])}ms', ha='center', fontsize=10)
+            ax.text(5, 2, '✅ Final Result:', ha='center', fontsize=16, fontweight='bold', color='green')
+            ax.text(5, 1.3, '"Sample Text"', ha='center', fontsize=18, fontweight='bold')
+            ax.text(5, 0.7, 'Confidence: 95.7%', ha='center', fontsize=14)
+            ax.text(5, 0.3, f'Time: {sum(processing_times[1:i+1])}ms', ha='center', fontsize=14)
         
         # Styling
         ax.set_xlim(0, 10)
         ax.set_ylim(0, 3)
-        ax.set_title(f'{stage}\n({time_ms}ms, {accuracy}%)', fontsize=10, fontweight='bold', 
+        ax.set_title(f'{stage}\n({time_ms}ms, {accuracy}%)', fontsize=12, fontweight='bold', 
                     color='white', bbox=dict(boxstyle="round,pad=0.3", facecolor=color))
         ax.axis('off')
     
@@ -208,7 +208,7 @@ def create_processing_pipeline():
 def create_performance_analysis():
     """Create performance comparison charts"""
     fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(15, 10))
-    fig.suptitle('VisionText Agent Performance Analysis', fontsize=16, fontweight='bold')
+    fig.suptitle('VisionText Agent Performance Analysis', fontsize=20, fontweight='bold')
     
     # 1. Accuracy Comparison
     systems = ['VisionText\nAgent', 'Tesseract\nBaseline', 'Google\nCloud OCR', 'EasyOCR']
@@ -223,11 +223,11 @@ def create_performance_analysis():
     bars2 = ax1.bar(x + width/2, word_accuracy, width, label='Word Accuracy', 
                     color='#E74C3C', alpha=0.8)
     
-    ax1.set_ylabel('Accuracy (%)', fontweight='bold')
-    ax1.set_title('Recognition Accuracy Comparison', fontweight='bold')
+    ax1.set_ylabel('Accuracy (%)', fontweight='bold', fontsize=14)
+    ax1.set_title('Recognition Accuracy Comparison', fontweight='bold', fontsize=16)
     ax1.set_xticks(x)
-    ax1.set_xticklabels(systems)
-    ax1.legend()
+    ax1.set_xticklabels(systems, fontsize=12)
+    ax1.legend(fontsize=12)
     ax1.grid(True, alpha=0.3)
     
     # Add value labels on bars
@@ -235,20 +235,21 @@ def create_performance_analysis():
         for bar in bars:
             height = bar.get_height()
             ax1.text(bar.get_x() + bar.get_width()/2., height + 0.5,
-                    f'{height}%', ha='center', va='bottom', fontweight='bold')
+                    f'{height}%', ha='center', va='bottom', fontweight='bold', fontsize=12)
     
     # 2. Processing Time Comparison
     processing_times = [2.3, 1.8, 3.1, 4.2]
     colors = ['#2ECC71', '#F39C12', '#9B59B6', '#E67E22']
     
     bars = ax2.bar(systems, processing_times, color=colors, alpha=0.8)
-    ax2.set_ylabel('Processing Time (seconds)', fontweight='bold')
-    ax2.set_title('Processing Time Comparison', fontweight='bold')
+    ax2.set_ylabel('Processing Time (seconds)', fontweight='bold', fontsize=14)
+    ax2.set_title('Processing Time Comparison', fontweight='bold', fontsize=16)
+    ax2.tick_params(axis='both', which='major', labelsize=12)
     ax2.grid(True, alpha=0.3)
     
     for bar, time in zip(bars, processing_times):
         ax2.text(bar.get_x() + bar.get_width()/2., bar.get_height() + 0.05,
-                f'{time}s', ha='center', va='bottom', fontweight='bold')
+                f'{time}s', ha='center', va='bottom', fontweight='bold', fontsize=12)
     
     # 3. Processing Stage Breakdown
     stages = ['Preprocess', 'Feature Ext.', 'Text Detection', 'Recognition', 'Post-process', 'Confidence']
@@ -257,7 +258,16 @@ def create_performance_analysis():
     
     wedges, texts, autotexts = ax3.pie(stage_times, labels=stages, colors=stage_colors, 
                                       autopct='%1.1f%%', startangle=90)
-    ax3.set_title('Processing Time Breakdown by Stage', fontweight='bold')
+    ax3.set_title('Processing Time Breakdown by Stage', fontweight='bold', fontsize=16)
+    
+    # Update pie chart text sizes
+    for text in texts:
+        text.set_fontsize(12)
+        text.set_fontweight('bold')
+    for autotext in autotexts:
+        autotext.set_fontsize(11)
+        autotext.set_fontweight('bold')
+        autotext.set_color('white')
     
     # 4. Quality Score Radar Chart
     categories = ['Accuracy', 'Speed', 'Robustness', 'Usability', 'Scalability']
@@ -276,11 +286,12 @@ def create_performance_analysis():
     ax4.fill(angles, baseline_scores, alpha=0.25, color='#E74C3C')
     
     ax4.set_xticks(angles[:-1])
-    ax4.set_xticklabels(categories)
+    ax4.set_xticklabels(categories, fontsize=12, fontweight='bold')
     ax4.set_ylim(0, 10)
-    ax4.set_title('Overall Quality Comparison', fontweight='bold')
-    ax4.legend()
+    ax4.set_title('Overall Quality Comparison', fontweight='bold', fontsize=16)
+    ax4.legend(fontsize=12)
     ax4.grid(True)
+    ax4.tick_params(axis='y', which='major', labelsize=11)
     
     plt.tight_layout()
     plt.savefig('performance_analysis.png', dpi=300, bbox_inches='tight', 
@@ -291,7 +302,7 @@ def create_performance_analysis():
 def create_accuracy_analysis():
     """Create detailed accuracy analysis charts"""
     fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(15, 10))
-    fig.suptitle('VisionText Agent Accuracy Analysis', fontsize=16, fontweight='bold')
+    fig.suptitle('VisionText Agent Accuracy Analysis', fontsize=20, fontweight='bold')
     
     # 1. Accuracy across handwriting styles
     handwriting_styles = ['Cursive\nWriting', 'Print\nHandwriting', 'Mixed\nStyle', 'Mathematical\nExpressions', 'Poor Quality\nImages']
@@ -299,14 +310,15 @@ def create_accuracy_analysis():
     colors = plt.cm.viridis(np.linspace(0, 1, len(handwriting_styles)))
     
     bars = ax1.bar(handwriting_styles, accuracy_scores, color=colors, alpha=0.8)
-    ax1.set_ylabel('Accuracy (%)', fontweight='bold')
-    ax1.set_title('Accuracy Across Different Handwriting Styles', fontweight='bold')
+    ax1.set_ylabel('Accuracy (%)', fontweight='bold', fontsize=14)
+    ax1.set_title('Accuracy Across Different Handwriting Styles', fontweight='bold', fontsize=16)
     ax1.set_ylim(80, 100)
     ax1.grid(True, alpha=0.3)
+    ax1.tick_params(axis='both', which='major', labelsize=12)
     
     for bar, score in zip(bars, accuracy_scores):
         ax1.text(bar.get_x() + bar.get_width()/2., bar.get_height() + 0.3,
-                f'{score}%', ha='center', va='bottom', fontweight='bold')
+                f'{score}%', ha='center', va='bottom', fontweight='bold', fontsize=12)
     
     # 2. Confidence score correlation
     confidence_ranges = ['0.0-0.3', '0.3-0.5', '0.5-0.7', '0.7-0.9', '0.9-1.0']
@@ -318,18 +330,19 @@ def create_accuracy_analysis():
              label='Actual Accuracy', color='#E74C3C')
     ax2.plot(x_pos, predicted_accuracy, 's-', linewidth=3, markersize=8, 
              label='Predicted Accuracy', color='#3498DB')
-    ax2.set_ylabel('Accuracy (%)', fontweight='bold')
-    ax2.set_xlabel('Confidence Score Range', fontweight='bold')
-    ax2.set_title('Confidence Score vs Actual Accuracy Correlation', fontweight='bold')
+    ax2.set_ylabel('Accuracy (%)', fontweight='bold', fontsize=14)
+    ax2.set_xlabel('Confidence Score Range', fontweight='bold', fontsize=14)
+    ax2.set_title('Confidence Score vs Actual Accuracy Correlation', fontweight='bold', fontsize=16)
     ax2.set_xticks(x_pos)
-    ax2.set_xticklabels(confidence_ranges)
-    ax2.legend()
+    ax2.set_xticklabels(confidence_ranges, fontsize=12)
+    ax2.tick_params(axis='y', which='major', labelsize=12)
+    ax2.legend(fontsize=12)
     ax2.grid(True, alpha=0.3)
     
     # Add correlation coefficient
     correlation = np.corrcoef(actual_accuracy, predicted_accuracy)[0, 1]
     ax2.text(0.05, 0.95, f'Correlation: r = {correlation:.3f}', 
-             transform=ax2.transAxes, fontsize=12, fontweight='bold',
+             transform=ax2.transAxes, fontsize=13, fontweight='bold',
              bbox=dict(boxstyle="round,pad=0.3", facecolor='lightblue'))
     
     # 3. Error analysis by character type
@@ -345,11 +358,12 @@ def create_accuracy_analysis():
     bars2 = ax3.bar(x_pos + width/2, error_rates, width, 
                     label='Error Rate', color='#E74C3C', alpha=0.8)
     
-    ax3.set_ylabel('Rate (%)', fontweight='bold')
-    ax3.set_title('Recognition Performance by Character Type', fontweight='bold')
+    ax3.set_ylabel('Rate (%)', fontweight='bold', fontsize=14)
+    ax3.set_title('Recognition Performance by Character Type', fontweight='bold', fontsize=16)
     ax3.set_xticks(x_pos)
-    ax3.set_xticklabels(char_types)
-    ax3.legend()
+    ax3.set_xticklabels(char_types, fontsize=12)
+    ax3.tick_params(axis='y', which='major', labelsize=12)
+    ax3.legend(fontsize=12)
     ax3.grid(True, alpha=0.3)
     
     # 4. Performance improvement over iterations
@@ -362,10 +376,11 @@ def create_accuracy_analysis():
     ax4.plot(iterations, confidence_progression, 's-', linewidth=3, markersize=8, 
              label='Confidence Accuracy', color='#9B59B6')
     
-    ax4.set_xlabel('Training/Optimization Iteration', fontweight='bold')
-    ax4.set_ylabel('Accuracy (%)', fontweight='bold')
-    ax4.set_title('Performance Improvement Over Development Cycles', fontweight='bold')
-    ax4.legend()
+    ax4.set_xlabel('Training/Optimization Iteration', fontweight='bold', fontsize=14)
+    ax4.set_ylabel('Accuracy (%)', fontweight='bold', fontsize=14)
+    ax4.set_title('Performance Improvement Over Development Cycles', fontweight='bold', fontsize=16)
+    ax4.tick_params(axis='both', which='major', labelsize=12)
+    ax4.legend(fontsize=12)
     ax4.grid(True, alpha=0.3)
     ax4.set_ylim(70, 100)
     
@@ -373,7 +388,7 @@ def create_accuracy_analysis():
     ax4.annotate(f'Final: {accuracy_progression[-1]}%', 
                 xy=(10, accuracy_progression[-1]), xytext=(8.5, 96),
                 arrowprops=dict(arrowstyle='->', color='#3498DB', lw=2),
-                fontsize=11, fontweight='bold', color='#3498DB')
+                fontsize=12, fontweight='bold', color='#3498DB')
     
     plt.tight_layout()
     plt.savefig('accuracy_analysis.png', dpi=300, bbox_inches='tight', 
