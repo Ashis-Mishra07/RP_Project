@@ -1,7 +1,6 @@
 import google.generativeai as genai
-from PIL import Image
+from PIL import Image, ImageEnhance, ImageFilter
 import io
-import base64
 
 
 def setup_gemini(api_key):
@@ -27,27 +26,22 @@ def predict_with_gemini(image, api_key):
         str: Recognized text/words from the image
     """
     try:
-        # Configure AI system
+        # Configure Gemini
         genai.configure(api_key=api_key)
         
         # Initialize the model
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        model = genai.GenerativeModel('gemini-2.0-flash')
         
-        # Create a simple prompt for text recognition
-        prompt = """
-        Look at this image and identify any text or words you can see. 
-        Return only the text/words you can read from the image.
-        If there are multiple words, return them separated by spaces.
-        If you cannot see any clear text, return "No text detected".
-        """
+        # Specify Odia script explicitly
+        prompt = """This image contains handwritten text in Odia script (ଓଡ଼ିଆ).
+Extract the Odia text exactly as written.
+Return only the Odia characters, nothing else."""
         
         # Generate response
         response = model.generate_content([prompt, image])
         
-        # Extract and clean the response
         if response.text:
-            recognized_text = response.text.strip()
-            return recognized_text
+            return response.text.strip()
         else:
             return "No text detected"
             
@@ -67,7 +61,7 @@ def test_gemini_api(api_key):
     """
     try:
         genai.configure(api_key=api_key)
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        model = genai.GenerativeModel('gemini-1.5-pro')
         
         # Test with a simple text prompt
         response = model.generate_content("Hello, this is a test.")
