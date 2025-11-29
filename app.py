@@ -156,6 +156,26 @@ def load_custom_css():
         position: relative;
         border-right: 1px solid rgba(255,255,255,0.1);
         box-shadow: 5px 0 30px rgba(0,0,0,0.2);
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+    
+    /* Force sidebar to show */
+    [data-testid="stSidebar"][aria-hidden="true"] {
+        display: block !important;
+        visibility: visible !important;
+    }
+    
+    section[data-testid="stSidebar"] {
+        display: block !important;
+        visibility: visible !important;
+        width: 21rem !important;
+    }
+    
+    section[data-testid="stSidebar"] > div {
+        display: block !important;
+        visibility: visible !important;
     }
     
     /* Animated gradient background */
