@@ -693,44 +693,42 @@ class VisionTextAgent:
     def _perform_actual_recognition(self, image):
         """Perform the actual text recognition using internal AI engine (hidden)"""
         try:
-            # Multi-attempt strategy with different prompts
+            # Multi-attempt strategy with different prompts for both English and Odia
             attempts = [
                 {
-                    "prompt": """IMPORTANT: The text in this image may appear ROTATED or in LANDSCAPE orientation even though the image is in portrait mode. The handwritten text might be written HORIZONTALLY (left-to-right) but the image may be rotated 90 degrees.
+                    "prompt": """IMPORTANT: The text in this image may appear ROTATED or in LANDSCAPE orientation even though the image is in portrait mode. The handwritten text might be written HORIZONTALLY (left-to-right).
 
-You are analyzing handwritten Odia script. Look at this image from ALL ANGLES if needed.
+You are analyzing handwritten text. Look at this image from ALL ANGLES if needed.
 
-The text is written in Odia script (ଓଡ଼ିଆ). It might be:
-- Written horizontally (normal reading direction)
-- Rotated 90 degrees clockwise or counter-clockwise
-- The actual text orientation may differ from image orientation
+The text can be in:
+1. **English** (Latin script: A-Z, a-z)
+2. **Odia script** (ଓଡ଼ିଆ: ଅ-ଔ, କ-ହ with vowel signs ା ି ୀ ୁ ୂ ୃ େ ୈ ୋ ୌ ଂ ଃ ୍)
 
-Focus on these character patterns:
-- Vowels: ଅ ଆ ଇ ଈ ଉ ଊ ଋ ଏ ଐ ଓ ଔ
-- Consonants: କ ଖ ଗ ଘ ଙ ଚ ଛ ଜ ଝ ଞ ଟ ଠ ଡ ଢ ଣ ତ ଥ ଦ ଧ ନ ପ ଫ ବ ଭ ମ ଯ ର ଲ ଳ ଵ ଶ ଷ ସ ହ
-- Special: ଡ଼ ଢ଼ (with nukta dot)
-- Vowel signs: ା ି ୀ ୁ ୂ ୃ େ ୈ ୋ ୌ ଂ ଃ ୍
+Common Odia words: ଓଡ଼ିଶା, ଆଶୀର୍ବାଦ, ଖ୍ରୀଷ୍ଟାବ୍ଦ, ରଥଯାତ୍ରା
 
-Common words: ଓଡ଼ିଶା, ଆଶୀର୍ବାଦ, ଖ୍ରୀଷ୍ଟାବ୍ଦ, ରଥଯାତ୍ରା
+Instructions:
+- Identify if text is English or Odia
+- Text might be rotated 90 degrees
+- Read horizontally (left-to-right)
+- Return ONLY the text you see (English OR Odia)
+- No translations, no explanations
 
-Rotate your perspective if needed to read the text correctly. Return ONLY the Odia characters you see. No English. No explanation.""",
+Text:""",
                     "temp": 0.05
                 },
                 {
-                    "prompt": """CRITICAL: This image may show text written HORIZONTALLY but the image itself is in portrait/vertical format. The handwriting is in LANDSCAPE orientation (horizontal writing).
+                    "prompt": """CRITICAL: This image shows handwritten text in LANDSCAPE orientation (horizontal writing).
 
-Look at the handwritten Odia text. The text direction is LEFT-TO-RIGHT horizontally, even if the image appears tall/vertical.
+The text is either:
+- **English handwriting** (A-Z letters)
+- **Odia handwriting** (ଓଡ଼ିଆ script)
 
-Read the Odia script characters:
-1. Check if text runs horizontally across the image
-2. Look at main character shapes
-3. Check for dots (anusvara/nukta) above or below
-4. Look for vowel marks attached to consonants
-5. Identify connected characters (conjuncts)
+Read the text horizontally, left-to-right. Look at:
+1. Character shapes and strokes
+2. Any diacritical marks or dots
+3. Connected letters or conjuncts
 
-The text may say common Odia words like: ଓଡ଼ିଶା (Odisha), ଆଶୀର୍ବାଦ (blessing), ଖ୍ରୀଷ୍ଟାବ୍ଦ (Christian era)
-
-Just write the Odia text exactly as you see it, reading horizontally.""",
+Return exactly what you read - English words OR Odia characters. Nothing else.""",
                     "temp": 0.15
                 }
             ]
@@ -753,20 +751,23 @@ Just write the Odia text exactly as you see it, reading horizontally.""",
                 
                 if response.text:
                     result = response.text.strip()
-                    # Check if result contains Odia characters
+                    
+                    # Check if result contains meaningful text (English or Odia)
                     odia_char_count = sum(1 for char in result if '\u0B00' <= char <= '\u0B7F')
+                    english_char_count = sum(1 for char in result if char.isalpha() and char.isascii())
                     total_chars = len([c for c in result if c.strip()])
                     
                     if total_chars > 0:
-                        confidence = odia_char_count / total_chars
+                        # Calculate confidence based on either Odia or English content
+                        confidence = (odia_char_count + english_char_count) / total_chars
                         if confidence > best_confidence:
                             best_confidence = confidence
                             best_result = result
             
-            if best_result and best_confidence > 0.5:
+            if best_result and best_confidence > 0.3:  # Lower threshold for English
                 return best_result
             else:
-                return "No Odia text detected"
+                return "No text detected"
                 
         except Exception as e:
             return f"Recognition error: {str(e)}"
