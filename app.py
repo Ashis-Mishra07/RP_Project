@@ -668,25 +668,6 @@ def load_custom_css():
             font-weight: 600;
         }
         
-        /* Force sidebar to be visible on mobile */
-        [data-testid="stSidebar"] {
-            display: block !important;
-            visibility: visible !important;
-        }
-        
-        /* Make hamburger menu more visible */
-        [data-testid="collapsedControl"] {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-            border-radius: 10px !important;
-            padding: 0.5rem !important;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4) !important;
-        }
-        
-        [data-testid="collapsedControl"] svg {
-            color: white !important;
-            font-size: 1.5rem !important;
-        }
-        
         /* Hide Streamlit branding */
         #MainMenu {visibility: hidden;}
         footer {visibility: hidden;}
