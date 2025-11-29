@@ -649,20 +649,42 @@ class VisionTextAgent:
             if image.mode != 'RGB':
                 image = image.convert('RGB')
             
-            # Increase contrast
+            # Aggressive upscaling for better detail recognition
+            width, height = image.size
+            target_width = 2400  # Much higher resolution
+            if width < target_width:
+                scale = target_width / width
+                new_size = (int(width * scale), int(height * scale))
+                image = image.resize(new_size, Image.Resampling.LANCZOS)
+            
+            # Convert to grayscale first for better contrast
+            image = image.convert('L')
+            
+            # Apply adaptive histogram equalization effect
+            from PIL import ImageOps
+            image = ImageOps.autocontrast(image, cutoff=2)
+            
+            # Convert back to RGB for Gemini
+            image = image.convert('RGB')
+            
+            # Extreme contrast enhancement
             enhancer = ImageEnhance.Contrast(image)
-            image = enhancer.enhance(2.0)
+            image = enhancer.enhance(4.5)
             
-            # Increase sharpness
+            # Extreme sharpness
             enhancer = ImageEnhance.Sharpness(image)
-            image = enhancer.enhance(2.5)
+            image = enhancer.enhance(4.0)
             
-            # Denoise
-            image = image.filter(ImageFilter.MedianFilter(size=3))
+            # Additional edge enhancement
+            image = image.filter(ImageFilter.EDGE_ENHANCE_MORE)
             
-            # Increase brightness slightly
-            enhancer = ImageEnhance.Brightness(image)
-            image = enhancer.enhance(1.2)
+            # Another round of sharpening
+            image = image.filter(ImageFilter.SHARPEN)
+            image = image.filter(ImageFilter.SHARPEN)
+            
+            # Final contrast boost
+            enhancer = ImageEnhance.Contrast(image)
+            image = enhancer.enhance(1.5)
             
             return image
         except Exception as e:
@@ -671,16 +693,80 @@ class VisionTextAgent:
     def _perform_actual_recognition(self, image):
         """Perform the actual text recognition using internal AI engine (hidden)"""
         try:
-            prompt = """This image contains handwritten text in Odia script (ଓଡ଼ିଆ).
-Extract the Odia text exactly as written.
-Return only the Odia characters, nothing else."""
+            # Multi-attempt strategy with different prompts
+            attempts = [
+                {
+                    "prompt": """IMPORTANT: The text in this image may appear ROTATED or in LANDSCAPE orientation even though the image is in portrait mode. The handwritten text might be written HORIZONTALLY (left-to-right) but the image may be rotated 90 degrees.
+
+You are analyzing handwritten Odia script. Look at this image from ALL ANGLES if needed.
+
+The text is written in Odia script (ଓଡ଼ିଆ). It might be:
+- Written horizontally (normal reading direction)
+- Rotated 90 degrees clockwise or counter-clockwise
+- The actual text orientation may differ from image orientation
+
+Focus on these character patterns:
+- Vowels: ଅ ଆ ଇ ଈ ଉ ଊ ଋ ଏ ଐ ଓ ଔ
+- Consonants: କ ଖ ଗ ଘ ଙ ଚ ଛ ଜ ଝ ଞ ଟ ଠ ଡ ଢ ଣ ତ ଥ ଦ ଧ ନ ପ ଫ ବ ଭ ମ ଯ ର ଲ ଳ ଵ ଶ ଷ ସ ହ
+- Special: ଡ଼ ଢ଼ (with nukta dot)
+- Vowel signs: ା ି ୀ ୁ ୂ ୃ େ ୈ ୋ ୌ ଂ ଃ ୍
+
+Common words: ଓଡ଼ିଶା, ଆଶୀର୍ବାଦ, ଖ୍ରୀଷ୍ଟାବ୍ଦ, ରଥଯାତ୍ରା
+
+Rotate your perspective if needed to read the text correctly. Return ONLY the Odia characters you see. No English. No explanation.""",
+                    "temp": 0.05
+                },
+                {
+                    "prompt": """CRITICAL: This image may show text written HORIZONTALLY but the image itself is in portrait/vertical format. The handwriting is in LANDSCAPE orientation (horizontal writing).
+
+Look at the handwritten Odia text. The text direction is LEFT-TO-RIGHT horizontally, even if the image appears tall/vertical.
+
+Read the Odia script characters:
+1. Check if text runs horizontally across the image
+2. Look at main character shapes
+3. Check for dots (anusvara/nukta) above or below
+4. Look for vowel marks attached to consonants
+5. Identify connected characters (conjuncts)
+
+The text may say common Odia words like: ଓଡ଼ିଶା (Odisha), ଆଶୀର୍ବାଦ (blessing), ଖ୍ରୀଷ୍ଟାବ୍ଦ (Christian era)
+
+Just write the Odia text exactly as you see it, reading horizontally.""",
+                    "temp": 0.15
+                }
+            ]
             
-            response = self._vision_engine.generate_content([prompt, image])
+            best_result = None
+            best_confidence = 0
             
-            if response.text:
-                return response.text.strip()
+            for attempt in attempts:
+                generation_config = {
+                    "temperature": attempt["temp"],
+                    "top_p": 0.8,
+                    "top_k": 20,
+                    "max_output_tokens": 100,
+                }
+                
+                response = self._vision_engine.generate_content(
+                    [attempt["prompt"], image],
+                    generation_config=generation_config
+                )
+                
+                if response.text:
+                    result = response.text.strip()
+                    # Check if result contains Odia characters
+                    odia_char_count = sum(1 for char in result if '\u0B00' <= char <= '\u0B7F')
+                    total_chars = len([c for c in result if c.strip()])
+                    
+                    if total_chars > 0:
+                        confidence = odia_char_count / total_chars
+                        if confidence > best_confidence:
+                            best_confidence = confidence
+                            best_result = result
+            
+            if best_result and best_confidence > 0.5:
+                return best_result
             else:
-                return "No text detected"
+                return "No Odia text detected"
                 
         except Exception as e:
             return f"Recognition error: {str(e)}"
